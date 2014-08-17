@@ -1,8 +1,8 @@
-
 TEMPLATE = app
 TARGET = BigBang-qt
-VERSION = 1.0.0.0
+VERSION = 2.0.0.0
 INCLUDEPATH += src src/json src/qt
+QT += core gui network
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE
 CONFIG += no_include_pwd
 CONFIG += thread
@@ -67,11 +67,11 @@ QMAKE_LFLAGS *= -fstack-protector-all --param ssp-buffer-size=1
 # This can be enabled for Windows, when we switch to MinGW >= 4.4.x.
 }
 # for extra security on Windows: enable ASLR and DEP via GCC linker flags
-win32:QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat
+win32:QMAKE_LFLAGS *= -Wl,--dynamicbase -Wl,--nxcompat,--large-address-aware -static
 win32:QMAKE_LFLAGS += -static-libgcc -static-libstdc++
 lessThan(QT_MAJOR_VERSION, 5): win32: QMAKE_LFLAGS *= -static
 
-
+#USE_QRCODE=1
 # use: qmake "USE_QRCODE=1"
 # libqrencode (http://fukuchi.org/works/qrencode/index.en.html) must be installed for support
 contains(USE_QRCODE, 1) {
@@ -125,6 +125,8 @@ contains(BITCOIN_NEED_QT_PLUGINS, 1) {
 
 INCLUDEPATH += src/leveldb/include src/leveldb/helpers
 LIBS += $$PWD/src/leveldb/libleveldb.a $$PWD/src/leveldb/libmemenv.a
+
+##hashing sources
 SOURCES += src/txdb-leveldb.cpp \
     src/bloom.cpp \
     src/hash.cpp \
@@ -145,6 +147,8 @@ SOURCES += src/txdb-leveldb.cpp \
     src/shabal.c \
     src/whirlpool.c \
     src/md_helper.c
+
+
 
 !win32 {
     # we use QMAKE_CXXFLAGS_RELEASE even without RELEASE=1 because we use RELEASE to indicate linking preferences not -O preferences
@@ -205,6 +209,9 @@ HEADERS += src/qt/bitcoingui.h \
     src/qt/aboutdialog.h \
     src/qt/editaddressdialog.h \
     src/qt/bitcoinaddressvalidator.h \
+    src/qt/blockbrowser.h \
+    src/qt/chatwindow.h \
+    src/qt/serveur.h \
     src/alert.h \
     src/addrman.h \
     src/base58.h \
@@ -297,6 +304,9 @@ HEADERS += src/qt/bitcoingui.h \
     src/sph_shabal.h \
     src/sph_whirlpool.h
 
+
+
+
 SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
     src/qt/addresstablemodel.cpp \
@@ -309,6 +319,9 @@ SOURCES += src/qt/bitcoin.cpp src/qt/bitcoingui.cpp \
     src/qt/aboutdialog.cpp \
     src/qt/editaddressdialog.cpp \
     src/qt/bitcoinaddressvalidator.cpp \
+    src/qt/blockbrowser.cpp \
+    src/qt/chatwindow.cpp \
+    src/qt/serveur.cpp \
     src/alert.cpp \
     src/version.cpp \
     src/sync.cpp \
@@ -381,7 +394,9 @@ FORMS += \
     src/qt/forms/sendcoinsentry.ui \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
-    src/qt/forms/optionsdialog.ui
+    src/qt/forms/optionsdialog.ui \
+    src/qt/forms/blockbrowser.ui \
+    src/qt/forms/chatwindow.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h
